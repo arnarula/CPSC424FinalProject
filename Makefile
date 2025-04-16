@@ -1,26 +1,51 @@
+# Compiler and flags
 CXX := g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -Iparlaylib/include/
+CXXFLAGS := -std=c++20 -Wall -Wextra -Iparlaylib/include/ -Isrc
 LDFLAGS :=
 
-BIN_DIR := bin
+# Directories
 SRC_DIR := src
+TEST_DIR := tests
+BUILD_DIR := floyd_build
+OBJ_DIR := $(BUILD_DIR)/obj
+BIN_DIR := $(BUILD_DIR)/bin
 
-par: LDFLAGS += -fopenmp
+# Source files
+# MAIN_SRC := $(SRC_DIR)/main.cpp
+# COMMON_SRC := $(filter-out $(MAIN_SRC), $(wildcard $(SRC_DIR)/*.cpp))
+LIB_SRC := $(wildcard $(TEST_DIR)/*.cpp)
+TEST_SRC := $(wildcard $(TEST_DIR)/*.cpp)
 
+# Object files
+LIB_OBJ := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(LIB_SRC))
+TEST_OBJ := $(patsubst $(TEST_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(TEST_SRC))
+# MAIN_OBJ := $(OBJ_DIR)/src_main.o
 
-all: $(BIN_DIR)/seq $(BIN_DIR)/par
+# Executables
+TEST_EXE := $(BIN_DIR)/test_runner
 
-$(BIN_DIR)/seq: $(SRC_DIR)/floyd_warshall.cpp
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
+# Default target
+.PHONY: all test clean dirs
+all: dirs test
 
-$(BIN_DIR)/par: $(SRC_DIR)/floyd_warshall_parallel.cpp
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
+# Ensure directories exist
+dirs:
+	mkdir -p $(OBJ_DIR) $(BIN_DIR)
 
-test: all
-	./$(BIN_DIR)/seq
-	./$(BIN_DIR)/par
+# Test executable
+test: dirs $(TEST_EXE)
+	$(TEST_EXE)
 
-.PHONY: clean
+$(TEST_EXE): $(COMMON_OBJ) $(TEST_OBJ)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+# Compilation rules
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Clean
 clean:
-	$(RM) $(BIN_DIR)/seq
-	$(RM) $(BIN_DIR)/par
+	rm -rf $(BUILD_DIR)
