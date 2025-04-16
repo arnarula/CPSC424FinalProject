@@ -29,6 +29,7 @@ void floydWarshall(int vertexCount, matrix& adjacencyMatrix) {
         }
     }
 
+    std::cout << "sequential run:\n";
     for (int i = 0; i < vertexCount; i++) {
         for (int j = 0; j < vertexCount; j++) {
             if (dist[i][j] == INT_MAX) {
