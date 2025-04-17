@@ -1,19 +1,19 @@
 # Compiler and flags
 CXX := g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -Iparlaylib/include/ -Isrc
+CXXFLAGS := -std=c++20 -Wall -Wextra -Iparlaylib/include/ -Iinclude/
 LDFLAGS :=
 
 # Directories
 SRC_DIR := src
 TEST_DIR := tests
-BUILD_DIR := floyd_build
+BUILD_DIR := build
 OBJ_DIR := $(BUILD_DIR)/obj
 BIN_DIR := $(BUILD_DIR)/bin
 
 # Source files
 # MAIN_SRC := $(SRC_DIR)/main.cpp
 # COMMON_SRC := $(filter-out $(MAIN_SRC), $(wildcard $(SRC_DIR)/*.cpp))
-LIB_SRC := $(wildcard $(TEST_DIR)/*.cpp)
+LIB_SRC := $(wildcard $(SRC_DIR)/*.cpp)
 TEST_SRC := $(wildcard $(TEST_DIR)/*.cpp)
 
 # Object files
@@ -36,8 +36,8 @@ dirs:
 test: dirs $(TEST_EXE)
 	$(TEST_EXE)
 
-$(TEST_EXE): $(COMMON_OBJ) $(TEST_OBJ)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+$(TEST_EXE): $(LIB_OBJ) $(TEST_OBJ)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 # Compilation rules
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp

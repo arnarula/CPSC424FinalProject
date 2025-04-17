@@ -8,6 +8,7 @@
 namespace testing {
     void run_tests(const std::vector<TestCase>& tests) {
         int passed = 0;
+        std::cout << "\nRunning tests...\n" << std::endl;
         for (const auto& test : tests) {
             bool success = test.func();
             std::cout << (success ? "[PASS] " : "[FAIL] ") << test.name << std::endl;

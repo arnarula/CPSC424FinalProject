@@ -1,6 +1,8 @@
 #include "test_framework.hpp"
-#include "floyd_warshall.cpp"
+#include "floyd_warshall.hpp"
+
 #include <iostream>
+#include <vector>
 
 bool test_basic_seq() {
   int vertexCount = 5;
@@ -13,18 +15,20 @@ bool test_basic_seq() {
   };
   matrix dist = floydWarshall(vertexCount, adjacencyMatrix);
   // TODO: change from printing to "asserting" the result
-  std::cout << "sequential run:\n";
-  for (int i = 0; i < vertexCount; i++) {
-      for (int j = 0; j < vertexCount; j++) {
-          if (dist[i][j] == INT_MAX) {
-              std::cout << "INF ";
-          } else {
-              std::cout << dist[i][j] << " ";
-          }
-      }
-      std::cout << std::endl;
-  }
+//   std::cout << "sequential run:\n";
+//   for (int i = 0; i < vertexCount; i++) {
+//       for (int j = 0; j < vertexCount; j++) {
+//           if (dist[i][j] == INT_MAX) {
+//               std::cout << "INF ";
+//           } else {
+//               std::cout << dist[i][j] << " ";
+//           }
+//       }
+//       std::cout << std::endl;
+//   }
   return true;
 }
 
-std::vector<testing::TestCase> init_tests = {{"Basic test of sequential Floyd Warshall implementation.", test_basic_seq}};
+std::vector<testing::TestCase> init_tests = {
+    {"Basic test of sequential Floyd Warshall implementation.", test_basic_seq}
+};
