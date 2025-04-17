@@ -7,7 +7,7 @@
 #include "graph_utils.hpp"
 #include "floyd_warshall_parallel.hpp"
 
-matrix floyd_warshall_parallel(matrix& adjacencyMatrix) {
+matrix floyd_warshall_parallel(matrix& adjacencyMatrix, bool timed) {
     
     parlay_matrix dist = copy_to_parlay_matrix(adjacencyMatrix);
     int n = dist.size(); // vertex count
@@ -34,10 +34,11 @@ matrix floyd_warshall_parallel(matrix& adjacencyMatrix) {
                     });
         });
     }
-    std::cout << "Parallel floyd time taken: " << t.total_time() << " seconds" << std::endl;
+
+    if (timed)
+        std::cout << "Parallel floyd time taken: " << t.total_time() << " seconds" << std::endl;
 
     // convert parlay_matrix back to matrix
     matrix result = convert_to_matrix(dist);
     return result;
 }
-

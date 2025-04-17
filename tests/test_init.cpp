@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 
-// missing edge constant
+// missing edge
 #define X std::numeric_limits<long long>::max()
 
 bool test_basic_seq_1() {
@@ -74,6 +74,32 @@ bool test_basic_seq_2() {
   return true;
 }
 
+bool test_basic_seq_neg_cycle() {
+  // has negative cycle
+  matrix adjacencyMatrix = {
+      {0, 1, X},
+      {X, 0,-1},
+      {-1, X, 0}
+  };
+
+  if (!has_negative_cycle(floyd_warshall(adjacencyMatrix))) {
+      return false;
+  }
+
+  // doesn't have negative cycle
+  matrix adjacencyMatrix2 = {
+      {0, 1, X},
+      {X, 0, 1},
+      {-1, X, 0}
+  };
+
+  if (has_negative_cycle(floyd_warshall(adjacencyMatrix2))) {
+      return false;
+  }
+
+  return true;
+}
+
 bool test_basic_par_1() {
   matrix adjacencyMatrix = {
       {X, 3, X, 6, X},
@@ -110,10 +136,10 @@ bool test_basic_par_2() {
     matrix adjacencyMatrix = get_rand_graph_2(100, 0.1, 1234);
 
     // sequential floyd warshall
-    matrix seq_output = floyd_warshall(adjacencyMatrix);
+    matrix seq_output = floyd_warshall(adjacencyMatrix, true);
 
     // parallel floyd warshall
-    matrix par_output = floyd_warshall_parallel(adjacencyMatrix);
+    matrix par_output = floyd_warshall_parallel(adjacencyMatrix, true);
 
     for (size_t i = 0; i < seq_output.size(); i++) {
         for (size_t j = 0; j < seq_output[i].size(); j++) {
@@ -160,6 +186,7 @@ std::vector<testing::TestCase> graph_builder_tests = {
 std::vector<testing::TestCase> init_tests = {
     {"Basic test: sequential floyd w/ 5x5 adjacency matrix.", test_basic_seq_1},
     {"Basic test: sequential floyd w/ len 5 adjacency list.", test_basic_seq_2},
+    {"Basic test: sequential floyd w/ negative cycle.", test_basic_seq_neg_cycle},
     {"Basic test: parallel floyd w/ 5x5 adjacency matrix.", test_basic_par_1},
-    {"Medium test: parallel floyd w/ 100 x 100 adjacency matrix.", test_basic_par_2}
+    {"Medium test: parallel floyd w/ 100x100 adjacency matrix.", test_basic_par_2}
 };
