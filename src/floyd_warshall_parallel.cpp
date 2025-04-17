@@ -2,48 +2,42 @@
 #include <climits>
 #include <vector>
 
+#include "parlay/internal/get_time.h"
+
 #include "graph_utils.hpp"
 #include "floyd_warshall_parallel.hpp"
 
-void floydWarshallParallel(int vertexCount, matrix& adjacencyMatrix) {
-
-    parlay_matrix dist = make_parlay_matrix(vertexCount, vertexCount);
+matrix floyd_warshall_parallel(matrix& adjacencyMatrix) {
     
-    parlay::parallel_for(0, vertexCount,
-        [&](int i){
-            parlay::parallel_for(0, vertexCount,
-                [&](int j){
-                    dist[i][j] = adjacencyMatrix[i][j];
-                    if (i != j && dist[i][j] == 0) {
-                        dist[i][j] = INT_MAX;
-                    }
-                });
-    });
+    parlay_matrix dist = copy_to_parlay_matrix(adjacencyMatrix);
+    int n = dist.size(); // vertex count
 
-    for (int k = 0; k < vertexCount; k++) {
-        parlay::parallel_for(0, vertexCount,
+    parlay::internal::timer t;
+    // init: min distance from a vertex to itself is 0
+    for (int i = 0; i < n; i++) {
+        if (dist[i][i] > 0) {
+            dist[i][i] = 0; 
+        }
+    }
+
+    for (int k = 0; k < n; k++) {
+        parlay::parallel_for(0, n,
             [&](int i){
-                parlay::parallel_for(0, vertexCount,
-                    [&](int j){
-                        if (dist[i][k] != MISSING_EDGE && dist[k][j] != MISSING_EDGE) {
-                            if (dist[i][j] > dist[i][k] + dist[k][j]) {
-                                dist[i][j] = dist[i][k] + dist[k][j];
-                            }
+                parlay::parallel_for(0, n,
+                    [&](int j) {
+                        if (dist[i][k] == MISSING_EDGE || dist[k][j] == MISSING_EDGE)
+                            return;
+
+                        if (dist[i][j] > dist[i][k] + dist[k][j]) {
+                            dist[i][j] = dist[i][k] + dist[k][j];
                         }
                     });
         });
     }
+    std::cout << "Parallel floyd time taken: " << t.total_time() << " seconds" << std::endl;
 
-    std::cout << "parallel run:\n";
-
-    for (int i = 0; i < vertexCount; i++) {
-        for (int j = 0; j < vertexCount; j++) {
-            if (dist[i][j] == MISSING_EDGE) {
-                std::cout << "INF ";
-            } else {
-                std::cout << dist[i][j] << " ";
-            }
-        }
-        std::cout << std::endl;
-    }
+    // convert parlay_matrix back to matrix
+    matrix result = convert_to_matrix(dist);
+    return result;
 }
+

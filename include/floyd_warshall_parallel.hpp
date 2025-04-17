@@ -7,4 +7,5 @@
 
 #include "graph_utils.hpp"
 
-void floydWarshallParallel(int vertexCount, matrix& adjacencyMatrix);
+matrix floyd_warshall_parallel(matrix& adjacencyMatrix);
+// matrix floyd_warshall_parallel(adj_list& adjacencyList);

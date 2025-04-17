@@ -1,0 +1,7 @@
+we can write todos and whatever we want here + leave notes
+
+/*
+Goals:
+    1. Random Graph Generation
+    2. Updates and batching?
+*/

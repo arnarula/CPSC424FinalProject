@@ -9,5 +9,5 @@ namespace testing {
     std::string name;
     std::function<bool()> func;
   };
-  void run_tests(const std::vector<TestCase> &tests);
+  void run_tests(std::string header, const std::vector<TestCase> &tests);
 } // namespace testing
