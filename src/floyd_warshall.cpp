@@ -11,6 +11,7 @@ matrix floyd_warshall(matrix& adjacencyMatrix, bool timed)
     int n = dist.size(); // vertex count
 
     parlay::internal::timer t;
+    t.start();
     
     // init: min distance from a vertex to itself is 0
     for (int i = 0; i < n; i++) {

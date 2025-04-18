@@ -136,10 +136,10 @@ bool test_basic_par_2() {
     matrix adjacencyMatrix = get_rand_graph_2(100, 0.1, 1234);
 
     // sequential floyd warshall
-    matrix seq_output = floyd_warshall(adjacencyMatrix, true);
+    matrix seq_output = floyd_warshall(adjacencyMatrix);
 
     // parallel floyd warshall
-    matrix par_output = floyd_warshall_parallel(adjacencyMatrix, true);
+    matrix par_output = floyd_warshall_parallel(adjacencyMatrix);
 
     for (size_t i = 0; i < seq_output.size(); i++) {
         for (size_t j = 0; j < seq_output[i].size(); j++) {
@@ -152,6 +152,38 @@ bool test_basic_par_2() {
     }
 
     return true;
+}
+
+bool test_runtime_par() {
+  matrix adjacencyMatrix = get_rand_graph_2(500, 0.1, 1234);
+
+  // sequential floyd warshall
+  matrix seq_output = floyd_warshall(adjacencyMatrix, true);
+  matrix par_output = floyd_warshall_parallel(adjacencyMatrix, true);
+  matrix par_output_2 = floyd_warshall_parallel_2(adjacencyMatrix, true);
+  matrix par_output_3 = floyd_warshall_parallel_3(adjacencyMatrix, true);
+
+  for (size_t i = 0; i < seq_output.size(); i++) {
+      for (size_t j = 0; j < seq_output[i].size(); j++) {
+          if (seq_output[i][j] != par_output[i][j]) {
+              std::cout << "At (" << i << ", " << j << "): "
+                        << seq_output[i][j] << " != " << par_output[i][j] << std::endl;
+              return false;
+          }
+          if (seq_output[i][j] != par_output_2[i][j]) {
+              std::cout << "At (" << i << ", " << j << "): "
+                        << seq_output[i][j] << " != " << par_output_2[i][j] << std::endl;
+              return false;
+          }
+          if (seq_output[i][j] != par_output_3[i][j]) {
+              std::cout << "At (" << i << ", " << j << "): "
+                        << seq_output[i][j] << " != " << par_output_3[i][j] << std::endl;
+              return false;
+          }
+      }
+  }
+
+  return true;
 }
 
 bool matrix_adj_list_converter() {
@@ -189,4 +221,8 @@ std::vector<testing::TestCase> init_tests = {
     {"Basic test: sequential floyd w/ negative cycle.", test_basic_seq_neg_cycle},
     {"Basic test: parallel floyd w/ 5x5 adjacency matrix.", test_basic_par_1},
     {"Medium test: parallel floyd w/ 100x100 adjacency matrix.", test_basic_par_2}
+};
+
+std::vector<testing::TestCase> runtime_tests = {
+    {"Runtime test: floyd benchmarks.", test_runtime_par}
 };
