@@ -4,6 +4,7 @@
 extern std::vector<testing::TestCase> init_tests;
 extern std::vector<testing::TestCase> graph_builder_tests;
 extern std::vector<testing::TestCase> runtime_tests;
+extern std::vector<testing::TestCase> updates_tests;
 
 int main() {
     // std::vector<testing::TestCase> all_tests;
@@ -11,6 +12,7 @@ int main() {
     testing::run_tests("graph building", graph_builder_tests);
     testing::run_tests("algorithm", init_tests);
     testing::run_tests("runtime", runtime_tests);
+    testing::run_tests("updates", updates_tests);
 
     return 0;
 }

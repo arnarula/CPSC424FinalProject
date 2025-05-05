@@ -117,3 +117,5 @@ inline matrix adj_list_to_matrix(const adj_list& adjacencyList) {
 
 parlay_matrix get_rand_graph(const int n, const double p, const unsigned long seed);
 matrix get_rand_graph_2(const int n, const double p, const unsigned long seed);
+
+std::vector<std::vector<long long>> get_graph_updates(long long seed, long long n_vtx, long long n_upd, long long minw, long long maxw);

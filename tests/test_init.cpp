@@ -206,6 +206,35 @@ bool test_runtime_par() {
   return true;
 }
 
+bool test_updates_simple() {
+  int n = 1000;
+  matrix adjacencyMatrix = get_rand_graph_2(n, 0.1, 1234);
+
+  std::vector<std::vector<long long>> upd_list = get_graph_updates(83, n, 10, 1, 100);
+  std::cout << "Generated 10 graph updates: \n";
+  for (int i = 0; i < 10; i++) {
+    std::cout << "\tupdate " << i  << ": (" << upd_list[i][0] << "," << upd_list[i][1] << ") = " << upd_list[i][2] << "\n";
+  }
+
+  std::cout << "\n";
+  std::cout << "Applying algorithm after each update:\n";
+  parlay::internal::timer t;
+  t.start();
+  for (auto &upd : upd_list) {
+    long long u;
+    long long v;
+    long long w;
+    u = upd[0];
+    v = upd[1];
+    w = upd[2];
+
+    adjacencyMatrix[u][v] = w;
+    floyd_warshall_parallel_4(adjacencyMatrix);
+  }
+  std::cout << "\tTotal time elapsed: " << t.total_time() << " sec\n";
+  return true;
+}
+
 bool matrix_adj_list_converter() {
   matrix adjacencyMatrix = {
       {X, 3, X, 6, X},
@@ -245,4 +274,8 @@ std::vector<testing::TestCase> init_tests = {
 
 std::vector<testing::TestCase> runtime_tests = {
     {"Runtime test: floyd benchmarks.", test_runtime_par}
+};
+
+std::vector<testing::TestCase> updates_tests = {
+    {"Batching test: small batch.", test_updates_simple}
 };

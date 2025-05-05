@@ -53,3 +53,29 @@ matrix get_rand_graph_2(const int n, const double p, const unsigned long seed) {
 
     return graph;
 }
+
+std::vector<std::vector<long long>> get_graph_updates(
+    long long seed, 
+    long long n_vtx, 
+    long long n_upd, 
+    long long minw, 
+    long long maxw
+) {
+    std::mt19937_64 rand_engine(seed);
+    static std::uniform_int_distribution<int> get_vertex(0, n_vtx);
+    static std::uniform_int_distribution<int> get_weight(minw, maxw+1);
+
+
+    std::vector<std::vector<long long>> out(n_upd, std::vector<long long>(3));
+
+    for (auto &e : out) {
+       e[0] = get_vertex(rand_engine); 
+       e[1] = get_vertex(rand_engine); 
+       e[2] = get_weight(rand_engine); 
+       if (e[2] == maxw) {
+           e[2] = MISSING_EDGE; 
+       }
+    }
+
+    return out;
+}
