@@ -2,6 +2,7 @@
 #include <climits>
 #include <vector>
 
+#include <immintrin.h>
 #include "parlay/internal/get_time.h"
 
 #include "graph_utils.hpp"
@@ -231,7 +232,7 @@ matrix floyd_warshall_parallel_5(matrix& adjacencyMatrix, bool timed) {
     }
 
     if (timed)
-        std::cout << "Parallel floyd (iter 5) Floyd-Warshall time: " << t.total_time() << " sec\n";
+        std::cout << "Parallel floyd (iter 5) time taken: " << t.total_time() << " seconds\n";
 
     return convert_to_matrix(dist);
 }
@@ -240,6 +241,7 @@ matrix floyd_warshall_parallel_6(matrix& adjacencyMatrix, bool timed) {
     
     parlay_matrix dist = copy_to_parlay_matrix(adjacencyMatrix);
     int n = dist.size();
+
     parlay_vec dist_vec = parlay::flatten(dist);
 
     parlay::internal::timer t;
@@ -256,19 +258,25 @@ matrix floyd_warshall_parallel_6(matrix& adjacencyMatrix, bool timed) {
     for (int k = 0; k < n; k++) {
         parlay::parallel_for(0, n,
             [&](int i){
-                auto& dist_ik = dist_vec[i * n + k];
+                auto base_i = &dist_vec[i * n];
+                __builtin_prefetch(base_i, 0, _MM_HINT_T0);
+
+                auto& dist_ik = base_i[k];
                 if (dist_ik == MISSING_EDGE)
                     return;
 
+                auto base_k = &dist_vec[k * n];
+                __builtin_prefetch(base_k, 0, _MM_HINT_T0);
+
                 parlay::parallel_for(0, n,
                     [&](int j) {
-                        auto& dist_kj = dist_vec[k * n + j];
+                        auto& dist_kj = base_k[j];
                         if (dist_kj == MISSING_EDGE)
                             return;
         
                         auto total_dist = dist_ik + dist_kj;
-                        if (dist_vec[i * n + j] > total_dist) {
-                            dist_vec[i * n + j] = total_dist;
+                        if (base_i[j] > total_dist) [[unlikely]] {
+                            base_i[j] = total_dist;
                         }
                     });
         });
@@ -278,12 +286,11 @@ matrix floyd_warshall_parallel_6(matrix& adjacencyMatrix, bool timed) {
         std::cout << "Parallel floyd (iter 6) time taken: " << t.total_time() << " seconds" << std::endl;
 
     // convert parlay_matrix back to matrix
-    parlay_matrix dist2 = make_parlay_matrix(n, n);
+    matrix result = make_matrix(n, n);
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            dist2[i][j] = dist_vec[i * n + j];
+            result[i][j] = dist_vec[i * n + j];
         }
     } 
-    matrix result = convert_to_matrix(dist2);
     return result;
 }

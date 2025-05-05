@@ -159,9 +159,8 @@ bool test_runtime_par() {
   // matrix adjacencyMatrix = get_rand_graph_2(2000, 0.1, 1234);
 
   // sequential floyd warshall
-  // matrix seq_output = floyd_warshall(adjacencyMatrix, true);
+  matrix seq_output = floyd_warshall(adjacencyMatrix, true);
   matrix par_output = floyd_warshall_parallel(adjacencyMatrix, true);
-  matrix seq_output = par_output;
   matrix par_output_2 = floyd_warshall_parallel_2(adjacencyMatrix, true);
   matrix par_output_3 = floyd_warshall_parallel_3(adjacencyMatrix, true);
   matrix par_output_4 = floyd_warshall_parallel_4(adjacencyMatrix, true);
