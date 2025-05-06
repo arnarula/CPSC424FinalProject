@@ -390,25 +390,25 @@ bool test_paths_3() {
   return true;
 }
 
-// std::vector<testing::TestCase> graph_builder_tests = {
-//     {"Graph test: adjacency matrix to adjacency list converter", matrix_adj_list_converter},
-// };
+std::vector<testing::TestCase> graph_builder_tests = {
+    {"Graph test: adjacency matrix to adjacency list converter", matrix_adj_list_converter},
+};
 
-// std::vector<testing::TestCase> init_tests = {
-//     {"Basic test: sequential floyd w/ 5x5 adjacency matrix.", test_basic_seq_1},
-//     {"Basic test: sequential floyd w/ len 5 adjacency list.", test_basic_seq_2},
-//     {"Basic test: sequential floyd w/ negative cycle.", test_basic_seq_neg_cycle},
-//     {"Basic test: parallel floyd w/ 5x5 adjacency matrix.", test_basic_par_1},
-//     {"Medium test: parallel floyd w/ 100x100 adjacency matrix.", test_basic_par_2}
-// };
+std::vector<testing::TestCase> init_tests = {
+    {"Basic test: sequential floyd w/ 5x5 adjacency matrix.", test_basic_seq_1},
+    {"Basic test: sequential floyd w/ len 5 adjacency list.", test_basic_seq_2},
+    {"Basic test: sequential floyd w/ negative cycle.", test_basic_seq_neg_cycle},
+    {"Basic test: parallel floyd w/ 5x5 adjacency matrix.", test_basic_par_1},
+    {"Medium test: parallel floyd w/ 100x100 adjacency matrix.", test_basic_par_2}
+};
 
-// std::vector<testing::TestCase> runtime_tests = {
-//     {"Runtime test: floyd benchmarks.", test_runtime_par}
-// };
+std::vector<testing::TestCase> runtime_tests = {
+    {"Runtime test: floyd benchmarks.", test_runtime_par}
+};
 
-// std::vector<testing::TestCase> updates_tests = {
-//     {"Batching test: small batch.", test_updates_simple}
-// };
+std::vector<testing::TestCase> updates_tests = {
+    {"Batching test: small batch.", test_updates_simple}
+};
 
 std::vector<testing::TestCase> paths_tests = {
     {"Shortest-path-building test", test_paths_1},
