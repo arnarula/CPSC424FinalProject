@@ -23,8 +23,8 @@ struct Path_Matrix
   Path_Matrix(const matrix &m);
   void init();
   void fw_par(bool time);
-  vi get_path_seq(int i, int j);
-  vi get_path_par(int i, int j);
+  vi get_path(int i, int j, bool par);
+  void fill_path(vi &seq, int ind, int i, int j, bool par);
   void update_edge_decrease(int i, int j, long long dec_by);
   void update_edge_increase(int i, int j, long long inc_by);
   void get_fast_tails(vb &table, int target, int j, bool par);

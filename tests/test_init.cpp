@@ -312,7 +312,7 @@ bool test_paths_1() {
   std::cout << "Checking get_path_seq...\n";
   for(int i=0; i<pm.n; i++) {
     for(int j=0; j<pm.n; j++) {
-      if(!check_path(i, j, pm, pm.get_path_seq(i, j))) {
+      if(!check_path(i, j, pm, pm.get_path(i, j, false))) {
         return false;
       }
     }
@@ -320,7 +320,7 @@ bool test_paths_1() {
   std::cout << "Checking get_path_par...\n";
   for(int i=0; i<pm.n; i++) {
     for(int j=0; j<pm.n; j++) {
-      if(!check_path(i, j, pm, pm.get_path_par(i, j))) {
+      if(!check_path(i, j, pm, pm.get_path(i, j, true))) {
         return false;
       }
     }
@@ -347,7 +347,7 @@ bool test_paths_2() {
   // Check paths
   for(int i=0; i<pm.n; i++) {
     for(int j=0; j<pm.n; j++) {
-      if(!check_path(i, j, pm, pm.get_path_par(i, j))) {
+      if(!check_path(i, j, pm, pm.get_path(i, j, true))) {
         return false;
       }
     }

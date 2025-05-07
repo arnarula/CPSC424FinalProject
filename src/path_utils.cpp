@@ -97,59 +97,41 @@ void Path_Matrix::fw_par(bool time)
   // convert parlay_matrix back to matrix
   d = convert_to_matrix(dist);
 }
-// Sequential version of get_fast_path
-// Returns as vector of int vertices a lowest-cost path from i to j
-vi Path_Matrix::get_path_seq(int i, int j)
+vi Path_Matrix::get_path(int i, int j, bool par)
 {
-  if (d[i][j] == MISSING_EDGE)
-  {
+  if(l[i][j] == -1) {
     // std:: cout << "No path exists from " << i << " to " << j << std::endl;
     return {}; // No path exists
-  }
-  if (i == j)
-  {
+  } else if(l[i][j] == 0) {
     return {i};
-  }
-  if (parent[i][j] < 0)
-  {
+  } else if(l[i][j] == 1) {
     return {i, j};
   }
-  vi p1 = get_path_seq(i, parent[i][j]);
-  vi p2 = get_path_seq(parent[i][j], j);
-  p1.pop_back();
-  p1.insert(p1.end(), p2.begin(), p2.end());
-  return p1;
+  vi ret(l[i][j] + 1);
+  ret[0] = i, ret[l[i][j]] = j;
+  fill_path(ret, 0, i, j, par);
+  return ret;
 }
-// Parallel version of get_fast_path
-// Returns as vector of int vertices a lowest-cost path from i to j
-vi Path_Matrix::get_path_par(int i, int j)
+void Path_Matrix::fill_path(vi &seq, int ind, int i, int j, bool par)
 {
-  if (d[i][j] == MISSING_EDGE)
-  {
-    // std:: cout << "No path exists from " << i << " to " << j << std::endl;
-    return {}; // No path exists
+  // By construction, l[i][j] > 0
+  if(l[i][j] == 1) return;
+  int p = parent[i][j];
+  seq[ind+l[i][p]] = p;
+  if(par) {
+    parlay::par_do(
+        [&]()
+        {
+          fill_path(seq, ind, i, p, true);
+        },
+        [&]()
+        {
+          fill_path(seq, ind+l[i][p], p, j, true);
+        });
+  } else {
+    fill_path(seq, ind, i, p, false);
+    fill_path(seq, ind+l[i][p], p, j, false);
   }
-  if (i == j)
-  {
-    return {i};
-  }
-  if (parent[i][j] < 0)
-  {
-    return {i, j};
-  }
-  vi p1, p2;
-  parlay::par_do(
-      [&]()
-      {
-        p1 = get_path_par(i, parent[i][j]);
-      },
-      [&]()
-      {
-        p2 = get_path_par(parent[i][j], j);
-      });
-  p1.pop_back();
-  p1.insert(p1.end(), p2.begin(), p2.end());
-  return p1;
 }
 // Important: assumes negative cycles are never formed!
 // Also assumes the edge being updated exists
