@@ -1,7 +1,6 @@
-# first commit
+# Floyd Warshall Parallel Programming Project
 
+Src contains the main source code for the project.
+Tests contain all the correctness tests for our implementation.
 
-Check [https://github.com/cmuparlay/parlaylib/tree/master/examples/helper] for graph framework
-
-In addition to the  `rmat_` stuff that already exists, i would recommend making random graphs
-which you can generate from a seed, a la `rand_graph(seed, n, p)`
+If you have any questions, feel free to contact the authors at arnav.narula@yale.edu, michael.tu@yale.edu derek.dong@yale.edu
